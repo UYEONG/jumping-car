@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="apple-mobile-web-app-title" content="JUMPING CAR">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Jumping Car GAME</title>
+    <link rel="apple-touch-icon" href="dist/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="dist/icons/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="dist/icons/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="dist/icons/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="dist/icons/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="dist/icons/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="dist/icons/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="dist/icons/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="dist/icons/apple-touch-icon-180x180.png" />
+    <link rel="apple-touch-startup-image" href="/launch.png">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="dist/vendors/buttons.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Dosis', serif;
+        }
+
+        .wrap {
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .showcase {
+            width: 100%;
+            max-width: 768px;
+            max-height: 768px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .showcase__loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .showcase__loading__dimmed {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            opacity: .5;
+        }
+
+        .showcase__preloader {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 80px;
+            height: 80px;
+            transform: translate(-50%, -50%);
+        }
+
+        .showcase__preloader svg {
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+            animation-name: rotate;
+            animation-timing-function: linear;
+        }
+
+        .showcase__background,
+        .showcase__graphic {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            overflow: hidden;
+            transform:translate3d(0,0,0);
+        }
+
+        .showcase__background {
+            background-size: contain;
+            will-change: transform;
+        }
+
+        .showcase__graphic {
+            right: 0;
+            bottom: 0;
+        }
+
+        .showcase__board {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 20px 30px;
+            font-size: 40px;
+            color: #fff;
+            transform: translate3d(0,0,0);
+        }
+
+        .showcase__greeting,
+        .showcase__gameover {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 100%;
+            transform: translate(-50%, -50%);
+            padding-bottom: 14px;
+        }
+
+        .showcase__title {
+            color: #fff;
+            font-size: 40px;
+        }
+
+        .showcase__gameover {
+            color: #fff;
+        }
+
+        .showcase__gameover .showcase__title {
+            margin-bottom: 0;
+        }
+
+        .blind {
+             font-size: 0;
+             height: 0;
+             left: 0;
+             line-height: 0;
+             overflow: hidden;
+             position: absolute;
+             top: 0;
+             visibility: hidden;
+             width: 0;
+        }
+
+        .showcase__menu-reload {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px !important;
+            opacity: .6;
+            padding: 0;
+        }
+
+        .showcase__menu-reload i {
+            display: inline-block;
+            background-image: url(dist/images/reload-arrow.png);
+            width: 24px;
+            height: 24px;
+            background-size: 24px;
+            margin-top: 8px;
+            line-height: 0;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg) }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="showcase">
+            <div class="showcase__parallax">
+                <div class="showcase__background fixed" style="background-image:url(dist/images/sunset.png)"></div>
+                <div class="showcase__background fixed" style="background-image:url(dist/images/sun.png)"></div>
+                <div class="showcase__background-group" style="display:none">
+                    <div class="showcase__background" style="background-image:url(dist/images/tree.png)"></div>
+                    <div class="showcase__background" style="background-image:url(dist/images/tree.png)"></div>
+                </div>
+                <div class="showcase__background-group" style="display:none">
+                    <div class="showcase__background" style="background-image:url(dist/images/land.png)"></div>
+                    <div class="showcase__background" style="background-image:url(dist/images/land.png)"></div>
+                </div>
+            </div>
+            <div class="showcase__graphic">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 0 0">
+                    <g class="parallax" style="display:none">
+                        <image x="0" y="0" xlink:href="dist/images/tree.png" width="0" height="100%"></image>
+                        <image x="0" y="0" xlink:href="dist/images/tree.png" width="0" height="100%"></image>
+                    </g>
+                    <g class="parallax" style="display:none">
+                        <image x="0" y="0" xlink:href="dist/images/land.png" width="0" height="100%"></image>
+                        <image x="0" y="0" xlink:href="dist/images/land.png" width="0" height="100%"></image>
+                    </g>
+                    <g class="car" transform="translate(40,0)">
+                        <svg x="0" y="0" width="100" height="40.234375" viewBox="0 0 512 206">
+                            <path d="M 489.798,87.613 C 473.171,77.372 419.54,64.278 344.278,64.278 L 304.522,17.898 C 296.137,8.116 283.895,2.485 271.011,2.485 l -119.003,0 c -12.644,0 -24.87,4.523 -34.47,12.751 L 70.624,55.45 20.585,62.598 C 13.479,63.613 7.696,68.829 5.955,75.793 l -5.95,23.794 132.415,61.792 370.755,0 0,-49.903 c -0.002,-9.759 -5.068,-18.744 -13.377,-23.863 z" style="fill:#ffb47d"></path>
+                            <path d="m 503.173,117.241 c 0,-17.655 -26.482,-35.31 -150.067,-35.31 l -344.275,0 c -4.875,0 -8.827,3.953 -8.827,8.827 l 0,52.965 167.725,26.482 335.445,0 0,-52.964 z" style="fill:#ff9164"></path>
+                            <path d="m 503.173,152.551 -413.929,0 -78.5,-17.443 c -4.715,-1.035 -9.474,1.935 -10.535,6.702 -1.052,4.759 1.949,9.474 6.707,10.53 l 79.447,17.655 c 0.629,0.142 1.267,0.211 1.913,0.211 l 414.894,0 c 4.879,0 8.828,-3.953 8.828,-8.827 0.001,-4.875 -3.946,-8.828 -8.825,-8.828 z" style="fill:#ff7d5a"></path>
+                            <path d="m 349.28154,138.54573 -185.377,0 c -4.875,0 -8.827,-3.953 -8.827,-8.827 l 0,0 c 0,-4.875 3.953,-8.827 8.827,-8.827 l 185.377,0 c 4.875,0 8.827,3.952 8.827,8.827 l 0,0 c 10e-4,4.876 -3.952,8.827 -8.827,8.827 z" style="fill:#ff7d5a"></path>
+                            <path d="m 503.173,139.66069 -8.827,0 c -4.875,0 -8.828,-3.953 -8.828,-8.827 l 0,0 c 0,-4.875 3.953,-8.827 8.828,-8.827 l 8.827,0 c 4.875,0 8.827,3.952 8.827,8.827 l 0,0 c 0,4.876 -3.952,8.827 -8.827,8.827 z" style="fill:#ff7d5a"></path>
+                            <path d="m 70.624,55.449 46.914,-40.214 c 9.6,-8.228 21.826,-12.751 34.47,-12.751 l 119.003,0 c 12.885,0 25.125,5.63 33.511,15.413 l 39.756,46.38 -209.002,0 c -7.78,0 -15.546,-0.643 -23.221,-1.922 L 70.624,55.449 Z" style="fill:#ff9164"></path>
+                            <path d="m 261.294,17.664 c -3.354,-4.025 -8.323,-6.352 -13.563,-6.352 l -81.524,0 c -4.682,0 -9.173,1.86 -12.483,5.171 l -26.482,26.482 c -2.341,2.341 -3.657,5.516 -3.657,8.827 l 0,0 c 0,6.894 5.589,12.484 12.484,12.484 l 154.647,0 c 3.742,0 5.786,-4.365 3.391,-7.24 L 261.294,17.664 Z" style="fill:#625d6b"></path>
+                            <path d="m 493.697,90.759 -8.181,0 c -4.875,0 -8.827,3.952 -8.827,8.827 0,4.875 3.953,8.827 8.827,8.827 l 17.261,0 c -0.766,-6.865 -3.963,-13.076 -9.08,-17.654 z" style="fill:#ededee"></path>
+                            <path d="m 304.522,17.897 c -2.115,-2.468 -4.48,-4.669 -7.036,-6.585 l -14.406,0 c -3.742,0 -5.786,4.364 -3.391,7.24 l 32.813,39.374 c 3.354,4.025 8.323,6.352 13.562,6.352 l 18.213,0 -39.755,-46.381 z" style="fill:#625d6b"></path>
+                            <path d="m 0.004,90.759 0,8.827 17.655,0 c 4.875,0 8.827,-3.952 8.827,-8.827 0,-4.875 -3.953,-8.827 -8.827,-8.827 l -8.828,0 C 3.955,81.931 0.004,85.884 0.004,90.759 Z" style="fill:#ff6464"></path>
+                            <circle r="44.137001" cy="152.54901" cx="423.72" style="fill:#ededee"></circle>
+                            <circle r="17.655001" cy="152.54901" cx="423.72" style="fill:#dcdbde"></circle>
+                            <circle r="44.137001" cy="152.54901" cx="88.275002" style="fill:#ededee"></circle>
+                            <circle r="17.655001" cy="152.54901" cx="88.275002" style="fill:#dcdbde"></circle>
+                            <path d="m 423.725,205.516 c -29.207,0 -52.965,-23.758 -52.965,-52.965 0,-29.207 23.758,-52.965 52.965,-52.965 29.207,0 52.965,23.758 52.965,52.965 0,29.207 -23.758,52.965 -52.965,52.965 z m 0,-88.275 c -19.473,0 -35.31,15.837 -35.31,35.31 0,19.473 15.837,35.31 35.31,35.31 19.473,0 35.31,-15.836 35.31,-35.31 0,-19.473 -15.836,-35.31 -35.31,-35.31 z" style="fill:#504b5a"></path>
+                            <path d="m 88.279,205.516 c -29.207,0 -52.965,-23.758 -52.965,-52.965 0,-29.207 23.758,-52.965 52.965,-52.965 29.207,0 52.965,23.758 52.965,52.965 -0.001,29.207 -23.759,52.965 -52.965,52.965 z m 0,-88.275 c -19.473,0 -35.31,15.837 -35.31,35.31 0,19.473 15.837,35.31 35.31,35.31 19.473,0 35.31,-15.836 35.31,-35.31 0,-19.473 -15.837,-35.31 -35.31,-35.31 z" style="fill:#504b5a"></path>
+                        </svg>
+                        <rect x="15" y="4" width="70" height="30" opacity="0"></rect>
+                    </g>
+                    <g class="obstacles"></g>
+                </svg>
+            </div>
+            <div class="showcase__board" style="opacity:0">
+                <span class="showcase__counter">0</span>
+            </div>
+            <div class="showcase__loading" style="opacity:1">
+                <div class="showcase__loading__dimmed"></div>
+                <div class="showcase__preloader">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%"  height="100%" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" fill="none" stroke="#795f5b" stroke-width="8" r="34" stroke-dasharray="160.22122533307947 55.40707511102649" transform="rotate(6 50 50)"></circle>
+                    </svg>
+                </div>
+            </div>
+            <div class="showcase__greeting" style="opacity:0">
+                <h1 class="showcase__title">!JUMPING CAR!</h1>
+                <button class="showcase__start-btn button button-3d">
+                    START GAME
+                </button>
+            </div>
+            <div class="showcase__gameover" style="opacity:0">
+                <h1 class="showcase__title">GAME OVER</h1>
+                <p class="showcase__score">
+                    <span class="showcase__score__title">SCORE: </span>
+                    <span class="showcase__score__counter">0</span>
+                </p>
+                <button class="showcase__restart-btn button button-3d">
+                    RESTART GAME
+                </button>
+            </div>
+            <div class="showcase__menus" style="opacity:0">
+                <button class="button button-rounded button-flat-highlight showcase__menu-reload">
+                    <i></i>
+                    <span class="blind">새로고침</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/howler/2.0.4/howler.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+    <script src="dist/vendors/stepperjs.browser-0.1.4.js"></script>
+    <script src="dist/bundle.js?20170723"></script>
+</body>
+</html>
