@@ -47,9 +47,9 @@ resource().then((resources) => {
     }).start();
 });
 
-if ((navigator.userAgent.indexOf('Safari') !== -1 &&
-    navigator.userAgent.indexOf('Chrome') === -1) ||
-    navigator.userAgent.indexOf('AppleWebKit') !== -1) {
+if ((navigator.userAgent.indexOf('Safari') !== -1 ||
+    navigator.userAgent.indexOf('AppleWebKit') !== -1)
+    && navigator.userAgent.indexOf('Chrome') === -1) {
     background = backgroundSVG.use();
 } else {
     background = backgroundDOM.use();
@@ -62,14 +62,15 @@ const stepper = new Stepper({
     update() {
         background.draw();
         obstacles.draw();
-        if (colliding(car.guide, obstacles.get(0)) ||
+        const headObstacle = obstacles.get(0);
+        if (colliding(car.guide, headObstacle) ||
             colliding(car.guide, obstacles.get(1))) {
             soundBang.play();
+            soundBg.stop();
             stepper.stop();
             car.stop();
-            soundBg.stop();
+            speedIncreaseTime.stop();
             started = false;
-            clearInterval(speedIncreaseTime);
             new Stepper({duration: 200}).on({
                 update(n) {
                     gameover.style.opacity = n;
@@ -78,11 +79,10 @@ const stepper = new Stepper({
                     gameover.style.display = 'block';
                 }
             }).start();
-        }
-        if (obstacles.get(0).x < 40 &&
-            !obstacles.get(0).counted) {
+        } else if (headObstacle.x < 40 &&
+            !headObstacle.counted) {
             updateScore(count + 1);
-            obstacles.get(0).counted = true;
+            headObstacle.counted = true;
         }
     }
 });
@@ -153,15 +153,31 @@ function startGame() {
     resetSpeed(.5);
     createObstacles();
     car.clear();
-    let time = setInterval(() => {
-        increaseSpeed(.5);
-        if (step.speed >= 7) {
-            clearInterval(time);
-            speedIncreaseTime = setInterval(() => {
-                increaseSpeed(.2);
-            }, 8000);
+    let starting = new Stepper({
+        duration: 200,
+        loop: true
+    }).on({
+        update(n) {
+            if (step.speed === 7) {
+                starting.stop();
+                starting = null;
+                speedIncreaseTime = new Stepper({
+                    duration: 8000,
+                    loop: true
+                }).on({
+                    update(n) {
+                        if (n >= 1) {
+                            increaseSpeed(.2);
+                        }
+                    }
+                });
+                speedIncreaseTime.start();
+            } else if (n >= 1) {
+                increaseSpeed(.5);
+            }
         }
-    }, 200);
+    });
+    starting.start();
     new Stepper({duration: 500}).on({
         update(n) {
             greeting.style.opacity = 1 - n;

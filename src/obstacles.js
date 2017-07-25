@@ -2,7 +2,7 @@ import {map, step} from './env';
 import random from './utils/random';
 
 const {viewBoxWidth, carImageWidth, carJumpHeight, landPositionY} = map;
-const obstaclesEl = document.querySelector('.obstacles');
+const obstaclesEl = document.querySelector('.svg-obstacles');
 const gapRange = [carImageWidth * 2.5, carImageWidth * 5.5];
 const heightRange = [carJumpHeight / 4, carJumpHeight / 1.5];
 let collection = [];
@@ -23,6 +23,7 @@ const obstacles = {
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.setAttribute('width', width);
         svg.setAttribute('height', height);
+        svg.setAttribute('class', 'svg-obstacles__obstacle');
         svg.setAttribute('x', x);
         svg.setAttribute('y', y);
         svg.insertAdjacentHTML('afterbegin', `
@@ -42,16 +43,37 @@ const obstacles = {
         stepValue = newStepValue;
     },
     draw() {
-        for (let i = 0; i < 5; i++) {
-            let obstacle = collection[i];
-            obstacle.x = obstacle.x - stepValue;
-            obstacle.svg.setAttribute('x', obstacle.x);
-        }
+        // for (let i = 0; i < 5; i++) {
+        //     let obstacle = collection[i];
+        //     obstacle.x = obstacle.x - stepValue;
+        //     obstacle.svg.setAttribute('x', obstacle.x);
+        // }
+        // ------
         let obstacle = collection[0];
+        obstacle.x = obstacle.x - stepValue;
+        obstacle.svg.setAttribute('x', obstacle.x);
+        // ------
+        obstacle = collection[1];
+        obstacle.x = obstacle.x - stepValue;
+        obstacle.svg.setAttribute('x', obstacle.x);
+        // ------
+        obstacle = collection[2];
+        obstacle.x = obstacle.x - stepValue;
+        obstacle.svg.setAttribute('x', obstacle.x);
+        // ------
+        obstacle = collection[3];
+        obstacle.x = obstacle.x - stepValue;
+        obstacle.svg.setAttribute('x', obstacle.x);
+        // ------
+        obstacle = collection[4];
+        obstacle.x = obstacle.x - stepValue;
+        obstacle.svg.setAttribute('x', obstacle.x);
+        // ------
+        obstacle = collection[0];
         if (obstacle.x + parseInt(obstacle.width, 10) < 0) {
             obstaclesEl.removeChild(obstacle.svg);
             collection = collection.filter((o) => o.svg !== obstacle.svg);
-            this.create();
+            setTimeout(() => this.create(), 0);
         }
     },
     clear() {
