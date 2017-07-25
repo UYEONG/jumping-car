@@ -23,7 +23,7 @@ const obstacles = {
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.setAttribute('width', width);
         svg.setAttribute('height', height);
-        svg.setAttribute('class', 'svg-obstacles__obstacle');
+        svg.setAttribute('class', 'graphic__obstacle');
         svg.setAttribute('x', x);
         svg.setAttribute('y', y);
         svg.insertAdjacentHTML('afterbegin', `
