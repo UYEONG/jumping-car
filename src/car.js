@@ -62,6 +62,7 @@ const car = {
     clear() {
         carY = landPositionY;
         carEl.setAttribute('transform', `translate(40,${carY})`);
+        jumpCount = 0;
     }
 };
 
