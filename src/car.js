@@ -1,7 +1,7 @@
 import {map, step} from './env';
 
 const {carImageHeight, carJumpHeight} = map;
-const carEl = document.querySelector('.car');
+const carEl = document.querySelector('.graphic__car');
 const landPositionY = map.landPositionY - carImageHeight + .5;
 let stepValue = step.range;
 let carY = landPositionY;

@@ -9,16 +9,17 @@ import colliding from './utils/colliding';
 window.Stepper = stepperjs.Stepper;
 window.easings = stepperjs.easings;
 
-const loading = document.querySelector('.showcase__loading');
-const greeting = document.querySelector('.showcase__greeting');
-const gameover = document.querySelector('.showcase__gameover');
-const menus = document.querySelector('.showcase__menus');
-const board = document.querySelector('.showcase__board');
-const counter = board.querySelector('.showcase__counter');
-const score = gameover.querySelector('.showcase__score__counter');
-const startButton = document.querySelector('.showcase__start-btn');
-const reStartButton = document.querySelector('.showcase__restart-btn');
-const reloadButton = menus.querySelector('.showcase__menu-reload');
+const infoInner = document.querySelector('.information__inner');
+const menuList = document.querySelector('.information__menu-list');
+const board = document.querySelector('.information__counter');
+const greeting = document.querySelector('.information__greeting');
+const gameover = document.querySelector('.information__gameover');
+const preloader = document.querySelector('.information__preloader');
+const counter = board.querySelector('span');
+const score = gameover.querySelector('.information__gameover .pane__desc span:last-child');
+const startButton = greeting.querySelector('.pane__button');
+const reStartButton = gameover.querySelector('.pane__button');
+const reloadButton = menuList.querySelector('.information__menu-item--type-reload');
 let soundBg;
 let soundJump;
 let soundBang;
@@ -35,14 +36,17 @@ resource().then((resources) => {
     soundBang = resources.sounds[2];
 
     new Stepper({duration: 500}).on({
+        start() {
+            greeting.style.display = 'block';
+        },
         update(n) {
-            loading.style.opacity = 1 - n;
+            preloader.style.opacity = 1 - n;
             greeting.style.opacity = n;
             board.style.opacity = n;
-            menus.style.opacity = n;
+            menuList.style.opacity = n;
         },
         ended() {
-            loading.style.display = 'none';
+            infoInner.removeChild(preloader);
         }
     }).start();
 });
@@ -72,11 +76,11 @@ const stepper = new Stepper({
             speedIncreaseTime.stop();
             started = false;
             new Stepper({duration: 200}).on({
+                start() {
+                    gameover.style.display = 'block';
+                },
                 update(n) {
                     gameover.style.opacity = n;
-                },
-                ended() {
-                    gameover.style.display = 'block';
                 }
             }).start();
         } else if (headObstacle.x < 40 &&
@@ -144,7 +148,7 @@ function startGame() {
                 gameover.style.opacity = 1 - n;
             },
             ended() {
-                gameover.style.display = 'none';
+                setTimeout(() => gameover.style.display = 'none', 0);
             }
         }).start();
     }
@@ -178,14 +182,19 @@ function startGame() {
         }
     });
     starting.start();
-    new Stepper({duration: 500}).on({
-        update(n) {
-            greeting.style.opacity = 1 - n;
-        },
-        ended() {
-            greeting.style.display = 'none';
-        }
-    }).start();
+
+    if (infoInner.contains(greeting)) {
+        new Stepper({duration: 500}).on({
+            update(n) {
+                greeting.style.opacity = 1 - n;
+            },
+            ended() {
+                if (infoInner.contains(greeting)) {
+                    infoInner.removeChild(greeting);
+                }
+            }
+        }).start();
+    }
     stepper.start();
     soundBg.play();
     started = true;

@@ -2,17 +2,15 @@ import {map, step} from './env';
 import arrayFrom from './utils/array-from';
 
 const {bgImageWidth} = map;
-const bgFixed = arrayFrom(document.querySelectorAll('.showcase__background--fixed'));
-const bgParal = arrayFrom(document.querySelectorAll('.showcase__background-group'));
-const bgImages = bgParal.map((p) => arrayFrom(p.querySelectorAll('.showcase__background--parallax')));
+const bgParal = arrayFrom(document.querySelectorAll('.parallax__background-group'));
+const bgImages = bgParal.map((p) => arrayFrom(p.querySelectorAll('.parallax__background--parallax')));
 const cache = [[0, bgImageWidth],[0, bgImageWidth]];
 let steps;
 
 const background = {
     use() {
         this.updateStep(step.range);
-        bgFixed.forEach((bg) => bg.style.width = `${bgImageWidth}px`);
-        bgParal.forEach((g) => g.style.display = 'block');
+        bgParal.forEach((g) => g.classList.add('show'));
         bgImages.forEach((bgs) => {
             bgs.forEach((bg, i) => {
                 bg.style.width = `${bgImageWidth}px`;

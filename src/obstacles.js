@@ -2,7 +2,7 @@ import {map, step} from './env';
 import random from './utils/random';
 
 const {viewBoxWidth, carImageWidth, carJumpHeight, landPositionY} = map;
-const obstaclesEl = document.querySelector('.svg-obstacles');
+const obstaclesEl = document.querySelector('.graphic__obstacles');
 const gapRange = [carImageWidth * 2.5, carImageWidth * 5.5];
 const heightRange = [carJumpHeight / 4, carJumpHeight / 1.5];
 let collection = [];
