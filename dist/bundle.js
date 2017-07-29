@@ -55,6 +55,15 @@ var step = Object.defineProperties({}, {
     }
 });
 
+var db = {
+    apiKey: "AIzaSyDnsXnW4mHAMvitOvGNTzd5RHERHAS7bb8",
+    authDomain: "jumping-car.firebaseapp.com",
+    databaseURL: "https://jumping-car.firebaseio.com",
+    projectId: "jumping-car",
+    storageBucket: "jumping-car.appspot.com",
+    messagingSenderId: "172024968188"
+};
+
 function image(src) {
     return new Promise(function (resolve, reject) {
         var image = new Image();
@@ -328,7 +337,7 @@ var obstacles = {
         svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
         svg.setAttribute('width', width);
         svg.setAttribute('height', height);
-        svg.setAttribute('class', 'svg-obstacles__obstacle');
+        svg.setAttribute('class', 'graphic__obstacle');
         svg.setAttribute('x', x);
         svg.setAttribute('y', y);
         svg.insertAdjacentHTML('afterbegin', '\n            <rect x="0"   y="0" width="100%" height="100%" opacity="1" fill="#eeeeee"></rect>\n            <rect x="0"   y="0" width="65%"  height="100%" opacity="1" fill="#d3d3d3"></rect>\n            <rect x="82%" y="0" width="18%"  height="100%" opacity="1" fill="#d3d3d3"></rect>\n            <rect x="0"   y="0" width="30%"  height="100%" opacity="1" fill="#b3b3b3"></rect>\n            <rect x="40%" y="0" width="10%"  height="100%" opacity="1" fill="#b3b3b3"></rect>\n            <line x1="1"   y1="100%" x2="1"    y2="0"    stroke="#7f7f7f" stroke-width="2"></line>\n            <line x1="0"   y1="0"    x2="100%" y2="0"    stroke="#7f7f7f" stroke-width="2"></line>\n            <line x1="98%" y1="0"    x2="98%"  y2="100%" stroke="#979797" stroke-width="2"></line>\n        ');
@@ -398,6 +407,29 @@ function colliding(rect1, rect2) {
     return x1 + w1 > x2 && y1 + h1 > y2 && x1 < x2 + w2;
 }
 
+var _firebase = void 0;
+var limit = 100;
+
+var scores = {
+    firebase: function firebase(fb) {
+        _firebase = fb;
+    },
+    select: function select() {
+        return _firebase.database().ref('scores').limitToFirst(limit).once('value').then(function (snapshot) {
+            var result = [];
+            snapshot.forEach(function (d) {
+                return !result.push(d.val());
+            });
+            return result;
+        });
+    },
+    insert: function insert(initials, score) {
+        return _firebase.database().ref('scores').push({ initials: initials, score: score }).then(function (r) {
+            return r.setPriority(-score);
+        });
+    }
+};
+
 window.Stepper = stepperjs.Stepper;
 window.easings = stepperjs.easings;
 
@@ -408,21 +440,31 @@ var menuList = document.querySelector('.information__menu-list');
 var board = document.querySelector('.information__counter');
 var greeting = document.querySelector('.information__greeting');
 var gameover = document.querySelector('.information__gameover');
+var gamerecord = document.querySelector('.information__game-record');
 var preloader = document.querySelector('.information__preloader');
+var formRecord = document.querySelector('.form-record-score');
+var gamescores = document.querySelector('.information__game-scores');
 var counter = board.querySelector('span');
 var score = gameover.querySelector('.information__gameover .pane__desc span:last-child');
 var startButton = greeting.querySelector('.pane__button');
-var reStartButton = gameover.querySelector('.pane__button');
+var recordButton = gameover.querySelector('.btn-record');
+var restartButton = gameover.querySelector('.btn-restart');
 var reloadButton = menuList.querySelector('.information__menu-item--type-reload');
+var rankingButton = menuList.querySelector('.information__menu-item--type-ranking');
+var closeButton = gamescores.querySelector('.game-scores__close .button');
+var initialsInput = formRecord.querySelector('input[name=initials]');
 var soundBg = void 0;
 var soundJump = void 0;
 var soundBang = void 0;
 var background = void 0;
 var started = false;
+var notRobot = false;
 var count = 0;
 
+firebase.initializeApp(db);
 showcase.style.height = map.viewBoxHeight + 'px';
 svg.setAttribute('viewBox', '0 0 ' + map.viewBoxWidth + ' ' + map.viewBoxHeight);
+scores.firebase(firebase);
 
 load$1().then(function (resources) {
     soundBg = resources.sounds[0];
@@ -463,7 +505,7 @@ var stepper = new Stepper({
             soundBg.stop();
             stepper.stop();
             car.stop();
-            speedIncreaseTime.stop();
+            speedIncreaseTime && speedIncreaseTime.stop();
             new Stepper({ duration: 200 }).on({
                 start: function start() {
                     gameover.style.display = 'block';
@@ -511,10 +553,14 @@ function updateScore(value) {
 }
 
 startButton.addEventListener('click', startGame);
-reStartButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', startGame);
+recordButton.addEventListener('click', onRecordScore);
+formRecord.addEventListener('submit', onSubmitRecord);
+closeButton.addEventListener('click', onCloseResord);
 reloadButton.addEventListener('click', function () {
     return window.location.reload();
 });
+rankingButton.addEventListener('click', onClickRanking);
 
 document.addEventListener('touchstart', function () {
     if (started && car.jump()) {
@@ -592,5 +638,84 @@ function startGame() {
         }
     }).start();
 }
+
+function renderRanking() {
+    gamescores.classList.add('game-scores--state-loading');
+    scores.select().then(function (data) {
+        gamescores.querySelector('tbody').innerHTML = data.map(function (datum, index) {
+            return '\n            <tr>\n                <td>' + (index + 1) + '</td>\n                <td>' + datum.initials + '</td>\n                <td>' + datum.score + '</td>\n            </tr>\n        ';
+        }).join('');
+        gamescores.classList.remove('game-scores--state-loading');
+    });
+}
+
+function onRecordScore() {
+    new Stepper({ duration: 200 }).on({
+        start: function start() {
+            gamerecord.style.display = 'block';
+        },
+        update: function update(n) {
+            gamerecord.style.opacity = n;
+        }
+    }).start();
+}
+
+function onSubmitRecord(event) {
+    event.preventDefault();
+
+    if (!initialsInput.value) {
+        alert('Enter yout initials.');
+        return;
+    }
+
+    if (!notRobot) {
+        alert('PLZ recaptcha.');
+        return;
+    }
+
+    formRecord.removeEventListener('submit', onSubmitRecord);
+    formRecord.querySelector('.form__submit').setAttribute('disabled', '');
+
+    scores.insert(initialsInput.value, count).then(function () {
+        formRecord.addEventListener('submit', onSubmitRecord);
+        formRecord.querySelector('.form__submit').removeAttribute('disabled');
+        grecaptcha.reset();
+        notRobot = false;
+        gamerecord.style.opacity = 0;
+        gamescores.style.opacity = 1;
+        gamerecord.style.display = 'none';
+        gamescores.style.display = 'block';
+        renderRanking();
+    });
+}
+
+function onCloseResord() {
+    new Stepper({ duration: 200 }).on({
+        update: function update(n) {
+            gamescores.style.opacity = 1 - n;
+        },
+        ended: function ended() {
+            gamescores.style.display = 'none';
+        }
+    }).start();
+}
+
+function onClickRanking() {
+    new Stepper({ duration: 200 }).on({
+        start: function start() {
+            gamescores.style.display = 'block';
+        },
+        update: function update(n) {
+            gamescores.style.opacity = n;
+        },
+        ended: function ended() {
+            renderRanking();
+        }
+    }).start();
+}
+
+window.onRecaptchaed = function () {
+    notRobot = true;
+};
 
 })));
