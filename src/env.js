@@ -38,4 +38,6 @@ const step = {
     }
 };
 
-export {map, step};
+const db = {};
+
+export {map, step, db};

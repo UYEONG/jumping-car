@@ -26,7 +26,7 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Dosis', serif;
+            font-family: 'Dosis', 'Apple SD Gothic Neo', AppleSDGothicNeo-Regular, '맑은 고딕', 'Malgun Gothic', '돋움', dotum, AppleGothic, sans-serif, '굴림', Gulim, Helvetica;;
             color: #fff;
         }
 
@@ -133,6 +133,16 @@
             display: none;
         }
 
+        .information__game-record,
+        .information__game-scores {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            display: none;
+        }
+
         .information__preloader {
             opacity: 1;
         }
@@ -179,7 +189,8 @@
             float: left;
         }
 
-        .information__menu-item .button {
+        .information__menu-item .button,
+        .game-scores__close .button {
             width: 40px;
             height: 40px !important;
             opacity: .6;
@@ -187,7 +198,8 @@
             margin-left: 10px;
         }
 
-        .information__menu-item i {
+        .information__menu-item i,
+        .game-scores__close i {
             display: inline-block;
             width: 24px;
             height: 24px;
@@ -200,6 +212,14 @@
             background-image: url(dist/images/reload-arrow.png);
         }
 
+        .information__menu-item--type-ranking i {
+            background-image: url(dist/images/ranking.png);
+        }
+
+        .game-scores__close i {
+            background-image: url(dist/images/close-button.png);
+        }
+
         .pane {
             width: 100%;
             height: 100%;
@@ -210,12 +230,150 @@
             margin-top: 0;
         }
 
+        .pane__button-group {
+            font-size: 0;
+        }
+
+        .pane__button-group .pane__button {
+            margin-right: 10px;
+        }
+
+        .pane__button-group .pane__button:last-child {
+            margin-right: 0;
+        }
+
         .pane__button {
             margin-bottom: 7px;
         }
 
+        .pane__button--small {
+            padding: 0 15px;
+        }
+
         .pane__desc {
             margin-top: -25px;
+        }
+
+        .form__input-group {
+            position: relative;
+            display: table;
+            border-collapse: separate;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form__label {
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .form__input {
+            display: table-cell;
+            width: 100%;
+            font-size: 16px;
+            border: 1px solid #b7b7b7;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            -webkit-appearance: none;
+            appearance: none;
+            box-sizing: border-box;
+        }
+
+        .form__submit {
+            display: block;
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .game-record,
+        .game-scores {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            box-shadow: 0 0 10px #6e6e6e;
+            color: #4b4b4b;
+        }
+
+        .game-record__inner,
+        .game-scores__inner {
+            width:inherit;
+            height:inherit;
+            position: relative;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .game-record__title,
+        .game-scores__title {
+            text-align: center;
+        }
+
+        .game-record__body,
+        .game-scores__body {
+            padding: 14px;
+        }
+
+        .game-scores--state-loading .game-scores__inner:before {
+            position: absolute;
+            left: calc(50% - 30px);
+            top: calc(50% - 30px);
+            width: 60px;
+            height: 60px;
+            background-image: url(dist/images/preload.svg);
+            content: ' ';
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+            animation-name: rotate;
+            animation-timing-function: linear;
+        }
+
+        .game-scores__close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .game-scores__close .button {
+            background: transparent;
+        }
+
+        .game-scores__body table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .game-scores__body caption {
+            text-align: right;
+            font-size: 12px;
+            color: #b3b3b3;
+        }
+
+        .game-scores__body table,
+        .game-scores__body th,
+        .game-scores__body td {
+            border: 1px solid #ebebeb;
+            padding: 8px;
+            font-weight: 300;
+        }
+
+        .game-scores__body thead {
+            background: #f2e7e5;
+            font-size: 16px;
+        }
+
+        .game-scores__body thead th:first-child {
+            width: 45px;
+        }
+
+        .g-recaptcha {
+            margin-top: 14px;
+        }
+
+        .g-recaptcha > div {
+            margin: 0 auto;
         }
 
         @keyframes rotate {
@@ -285,9 +443,15 @@
                                <li class="information__menu-item information__menu-item--type-reload">
                                    <button class="button button-rounded button-flat-highlight">
                                        <i></i>
-                                       <span class="blind">새로고침</span>
+                                       <span class="blind">Reload</span>
                                    </button>
                                </li>
+                                <li class="information__menu-item information__menu-item--type-ranking">
+                                    <button class="button button-rounded button-flat-highlight">
+                                        <i></i>
+                                        <span class="blind">Ranking</span>
+                                    </button>
+                                </li>
                             </ul>
                         </div>
                         <div class="information__counter">
@@ -306,7 +470,50 @@
                                 <div class="pane__inner">
                                     <h2 class="pane__title">GAME OVER</h2>
                                     <p class="pane__desc"><span>SCORE: </span><span>0</span></p>
-                                    <button class="pane__button button button-3d">RESTART GAME</button>
+                                    <div class="pane__button-group">
+                                        <button class="pane__button pane__button--small button button-3d btn-record">RECORD SCORE</button>
+                                        <button class="pane__button pane__button--small button button-3d btn-restart">RESTART GAME</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="information__game-record">
+                            <div class="game-record">
+                                <div class="game-record__inner">
+                                    <h2 class="game-record__title">RECORD SCORE</h2>
+                                    <div class="game-record__body">
+                                        <form action="/" class="form form-record-score">
+                                            <div class="form__input-group">
+                                                <label class="form__label" for="initials">YOUR INITIALS</label>
+                                                <input class="form__input" name="initials" id="initials" type="text" maxlength="8"/>
+                                            </div>
+                                            <div class="g-recaptcha" data-sitekey="6Ld97yoUAAAAAOiZzzPxLTrpCO6RHdQUoBwNYS26" data-callback="onRecaptchaed"></div>
+                                            <button class="form__submit button button-primary button-3d">SUBMIT</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="information__game-scores">
+                            <div class="game-scores">
+                                <div class="game-scores__inner">
+                                    <h1 class="game-scores__title">SCORES</h1>
+                                    <div class="game-scores__close">
+                                        <button class="button button-flat-highlight">
+                                            <i></i>
+                                            <span class="blind">닫기</span>
+                                        </button>
+                                    </div>
+                                    <div class="game-scores__body">
+                                        <table>
+                                            <caption>1위에서 100위 까지의 랭킹 현황</caption>
+                                            <thead>
+                                                <tr><th>RANK</th><th>INITIALS</th><th>SCORE</th></tr>
+                                            </thead>
+                                            </tfoot>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -318,6 +525,8 @@
             </div>
         </div>
     </div>
+    <script src="//www.google.com/recaptcha/api.js" async defer></script>
+    <script src="//www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/howler/2.0.4/howler.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>

@@ -1,11 +1,11 @@
-import {map, step} from './env';
+import {map, step, db} from './env';
 import resource from './utils/resource';
 import backgroundDOM from './background-dom';
 import backgroundSVG from './background-svg';
 import car from './car';
 import obstacles from './obstacles';
 import colliding from './utils/colliding';
-
+import scores from './scores';
 window.Stepper = stepperjs.Stepper;
 window.easings = stepperjs.easings;
 
@@ -16,21 +16,31 @@ const menuList = document.querySelector('.information__menu-list');
 const board = document.querySelector('.information__counter');
 const greeting = document.querySelector('.information__greeting');
 const gameover = document.querySelector('.information__gameover');
+const gamerecord = document.querySelector('.information__game-record');
 const preloader = document.querySelector('.information__preloader');
+const formRecord = document.querySelector('.form-record-score');
+const gamescores = document.querySelector('.information__game-scores');
 const counter = board.querySelector('span');
 const score = gameover.querySelector('.information__gameover .pane__desc span:last-child');
 const startButton = greeting.querySelector('.pane__button');
-const reStartButton = gameover.querySelector('.pane__button');
+const recordButton = gameover.querySelector('.btn-record');
+const restartButton = gameover.querySelector('.btn-restart');
 const reloadButton = menuList.querySelector('.information__menu-item--type-reload');
+const rankingButton = menuList.querySelector('.information__menu-item--type-ranking');
+const closeButton = gamescores.querySelector('.game-scores__close .button');
+const initialsInput = formRecord.querySelector('input[name=initials]');
 let soundBg;
 let soundJump;
 let soundBang;
 let background;
 let started = false;
+let notRobot = false;
 let count = 0;
 
+firebase.initializeApp(db);
 showcase.style.height = `${map.viewBoxHeight}px`;
 svg.setAttribute('viewBox', `0 0 ${map.viewBoxWidth} ${map.viewBoxHeight}`);
+scores.firebase(firebase);
 
 resource().then((resources) => {
     soundBg = resources.sounds[0];
@@ -74,7 +84,7 @@ const stepper = new Stepper({
             soundBg.stop();
             stepper.stop();
             car.stop();
-            speedIncreaseTime.stop();
+            speedIncreaseTime && speedIncreaseTime.stop();
             new Stepper({duration: 200}).on({
                 start() {
                     gameover.style.display = 'block';
@@ -122,8 +132,12 @@ function updateScore(value) {
 }
 
 startButton.addEventListener('click', startGame);
-reStartButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', startGame);
+recordButton.addEventListener('click', onRecordScore);
+formRecord.addEventListener('submit', onSubmitRecord);
+closeButton.addEventListener('click', onCloseResord);
 reloadButton.addEventListener('click', () => window.location.reload());
+rankingButton.addEventListener('click', onClickRanking);
 
 document.addEventListener('touchstart', () => {
     if (started && car.jump()) {
@@ -200,3 +214,86 @@ function startGame() {
         }
     }).start();
 }
+
+function renderRanking() {
+    gamescores.classList.add('game-scores--state-loading');
+    scores.select().then((data) => {
+        gamescores.querySelector('tbody').innerHTML = data.map((datum, index) => (`
+            <tr>
+                <td>${index + 1}</td>
+                <td>${datum.initials}</td>
+                <td>${datum.score}</td>
+            </tr>
+        `)).join('');
+        gamescores.classList.remove('game-scores--state-loading');
+    });
+}
+
+function onRecordScore() {
+    new Stepper({duration: 200}).on({
+        start() {
+            gamerecord.style.display = 'block';
+        },
+        update(n) {
+            gamerecord.style.opacity = n;
+        }
+    }).start();
+}
+
+function onSubmitRecord(event) {
+    event.preventDefault();
+
+    if (!initialsInput.value) {
+        alert('Enter yout initials.');
+        return;
+    }
+
+    if (!notRobot) {
+        alert('PLZ recaptcha.');
+        return;
+    }
+
+    formRecord.removeEventListener('submit', onSubmitRecord);
+    formRecord.querySelector('.form__submit').setAttribute('disabled', '');
+
+    scores.insert(initialsInput.value, count).then(() => {
+        formRecord.addEventListener('submit', onSubmitRecord);
+        formRecord.querySelector('.form__submit').removeAttribute('disabled');
+        grecaptcha.reset();
+        notRobot = false;
+        gamerecord.style.opacity = 0;
+        gamescores.style.opacity = 1;
+        gamerecord.style.display = 'none';
+        gamescores.style.display = 'block';
+        renderRanking();
+    });
+}
+
+function onCloseResord() {
+    new Stepper({duration: 200}).on({
+        update(n) {
+            gamescores.style.opacity = 1 - n;
+        },
+        ended() {
+            gamescores.style.display = 'none';
+        }
+    }).start();
+}
+
+function onClickRanking() {
+    new Stepper({duration: 200}).on({
+        start() {
+            gamescores.style.display = 'block';
+        },
+        update(n) {
+            gamescores.style.opacity = n;
+        },
+        ended() {
+            renderRanking();
+        }
+    }).start();
+}
+
+window.onRecaptchaed = function() {
+    notRobot = true;
+};
