@@ -334,13 +334,18 @@ var obstacles = {
         var height = random(heightRange[0], heightRange[1]);
         var x = (lastObstacle ? lastObstacle.x : viewBoxWidth$1) + gap;
         var y = landPositionY$1 - height + 1;
+        var obstacleHtml = '\n            <rect x="0"   y="0" width="100%" height="100%" opacity="1" fill="#eeeeee"></rect>\n            <rect x="0"   y="0" width="65%"  height="100%" opacity="1" fill="#d3d3d3"></rect>\n            <rect x="82%" y="0" width="18%"  height="100%" opacity="1" fill="#d3d3d3"></rect>\n            <rect x="0"   y="0" width="30%"  height="100%" opacity="1" fill="#b3b3b3"></rect>\n            <rect x="40%" y="0" width="10%"  height="100%" opacity="1" fill="#b3b3b3"></rect>\n            <line x1="1"   y1="100%" x2="1"    y2="0"    stroke="#7f7f7f" stroke-width="2"></line>\n            <line x1="0"   y1="0"    x2="100%" y2="0"    stroke="#7f7f7f" stroke-width="2"></line>\n            <line x1="98%" y1="0"    x2="98%"  y2="100%" stroke="#979797" stroke-width="2"></line>\n        ';
         svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
         svg.setAttribute('width', width);
         svg.setAttribute('height', height);
         svg.setAttribute('class', 'graphic__obstacle');
         svg.setAttribute('x', x);
         svg.setAttribute('y', y);
-        svg.insertAdjacentHTML('afterbegin', '\n            <rect x="0"   y="0" width="100%" height="100%" opacity="1" fill="#eeeeee"></rect>\n            <rect x="0"   y="0" width="65%"  height="100%" opacity="1" fill="#d3d3d3"></rect>\n            <rect x="82%" y="0" width="18%"  height="100%" opacity="1" fill="#d3d3d3"></rect>\n            <rect x="0"   y="0" width="30%"  height="100%" opacity="1" fill="#b3b3b3"></rect>\n            <rect x="40%" y="0" width="10%"  height="100%" opacity="1" fill="#b3b3b3"></rect>\n            <line x1="1"   y1="100%" x2="1"    y2="0"    stroke="#7f7f7f" stroke-width="2"></line>\n            <line x1="0"   y1="0"    x2="100%" y2="0"    stroke="#7f7f7f" stroke-width="2"></line>\n            <line x1="98%" y1="0"    x2="98%"  y2="100%" stroke="#979797" stroke-width="2"></line>\n        ');
+        if (svg.insertAdjacentHTML) {
+            svg.insertAdjacentHTML('afterbegin', obstacleHtml);
+        } else {
+            svg.innerHTML = obstacleHtml;
+        }
         collection.push({ svg: svg, x: x, y: y, width: width, height: height, counted: false });
         obstaclesEl.appendChild(svg);
     },
