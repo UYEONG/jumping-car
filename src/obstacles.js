@@ -20,13 +20,7 @@ const obstacles = {
         const height = random(heightRange[0], heightRange[1]);
         const x = (lastObstacle ? lastObstacle.x : viewBoxWidth) + gap;
         const y = landPositionY - height + 1;
-        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-        svg.setAttribute('width', width);
-        svg.setAttribute('height', height);
-        svg.setAttribute('class', 'graphic__obstacle');
-        svg.setAttribute('x', x);
-        svg.setAttribute('y', y);
-        svg.insertAdjacentHTML('afterbegin', `
+        const obstacleHtml = `
             <rect x="0"   y="0" width="100%" height="100%" opacity="1" fill="#eeeeee"></rect>
             <rect x="0"   y="0" width="65%"  height="100%" opacity="1" fill="#d3d3d3"></rect>
             <rect x="82%" y="0" width="18%"  height="100%" opacity="1" fill="#d3d3d3"></rect>
@@ -35,7 +29,18 @@ const obstacles = {
             <line x1="1"   y1="100%" x2="1"    y2="0"    stroke="#7f7f7f" stroke-width="2"></line>
             <line x1="0"   y1="0"    x2="100%" y2="0"    stroke="#7f7f7f" stroke-width="2"></line>
             <line x1="98%" y1="0"    x2="98%"  y2="100%" stroke="#979797" stroke-width="2"></line>
-        `);
+        `;
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
+        svg.setAttribute('class', 'graphic__obstacle');
+        svg.setAttribute('x', x);
+        svg.setAttribute('y', y);
+        if (svg.insertAdjacentHTML) {
+            svg.insertAdjacentHTML('afterbegin', obstacleHtml);
+        } else {
+            svg.innerHTML = obstacleHtml;
+        }
         collection.push({svg, x, y, width, height, counted: false});
         obstaclesEl.appendChild(svg);
     },
